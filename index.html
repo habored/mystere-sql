@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/fontfaces.css" />
+    <link rel="stylesheet" href="./css/codemirror.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/neat.css" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css">-->
+    <!-- /CSS -->
+
+    <!-- FAVICONS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="./img/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="./img/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="./img/favicons/manifest.json">
+    <link rel="mask-icon" href="./img/favicons/safari-pinned-tab.svg" color="#2E1D47">
+    <meta name="theme-color" content="#ffffff">
+    <!-- /FAVICONS -->
+
+    <title>Meurtre et mystère à SQL City</title>
+
+    <script src="https://unpkg.com/@webcomponents/custom-elements@1.2.0/custom-elements.min.js"></script>
+    <script src="./scripts/codemirror.js"></script>
+    <script src="./scripts/codemirrorsql.js"></script>
+    <script src="./scripts/autorefresh.js"></script>
+    <script src="./scripts/main.js"></script>
+    <script>
+        window.onload = () => loadData('sql-murder-mystery.db');
+    </script>
+</head>
+<body> 
+
+    <header>
+        <h1>
+            Meurtre et mystère à SQL City
+        </h1>
+        <h2 class="subtitle">Réussiras-tu à résoudre l'enquête ?</h2>
+    </header>
+
+    <main>
+        <div class="introduction">
+            <img src="./img/illustration.jpg" alt="Illustration accessoire d'un tableau d'indices">
+            <p>
+                Voilà quelques mois que des meurtres particulièrement étranges ont lieu dans la ville de SQL City. En tant que stagiaire à la section 🚔🚨« Meurtres et Mystères » de la police locale🚨🚔, tu es chargé de mener l'enquête. Pour cela, tu peux accéder à cette énorme base de données, manipulable avec SQLite. Cette base de données contient tous les indices nécessaires. Tu dois utiliser le langage SQL pour naviguer à travers ce vaste réseau d'informations et résoudre ce mystère. Bonne chance 🍀.
+            </p>
+            <p>Si tu es novice, tu peux regarder les aides à <a href="walkthrough.html" target="_blank">cette page</a>.</p>
+        </div>
+
+        <div class="grid-item">
+            <h2>Des meurtres particulièrement étranges</h2>
+            <p>William, enfin, l'inspecteur Bullock t'avait remis un <b>rapport</b> très important, mais tu l'as égaré 😫 ! </p>
+            <p>Commence par récupérer <b>le rapport</b> de la scène crime. Avec un peu de chance, il est déjà numérisé dans la base de données.</p>
+            <div class="clue">
+                <div class="clue-title">
+                    <div>Indice numéro 1</div>
+                    <div class="clue-number">1</div>
+                </div>
+                <p>Tu te souviens vaguement  que le crime a eu lieu le 15 janvier 2018 à SQL City et que l'inspecteur Bullock t'avait remis le rapport après t'avoir conduit sur le <b>lieu du crime</b>. </p>
+            </div>
+
+            <h3>Exploration de la structure de la base de données</h3>
+
+            <p>Les cellules suivantes sont connectées à la base de données de la section de police "Meurtres et Mystères". Elles permettent d'exécuter des requêtes SQL sur cette base. </p>
+            <p>
+                Comme tu es un informaticien expérimenté, tu cherches d'abord à connaître <b>la structure de la base de données</b> avec laquelle tu dois travailler. 
+            </p>
+            <sql-exercise data-question="La requête suivante renvoie les requêtes SQL qui ont permis de créer les tables de cette base de données." data-comment="Cette commande est spécifique à SQLite. Les autres bases de données ont leur syntaxe spécifique." data-default-text="SELECT tbl_name, sql FROM sqlite_master WHERE type = 'table'"></sql-exercise>
+        </div>
+
+        <div class="grid-item">
+            <p>Si les valeurs de l'attribut sql te semblent obscures, ce n'est pas grave. En effet, maintenant que tu as récupéré les noms des tables, tu peux faire des requêtes pour en afficher les tables. </p>
+            <sql-exercise data-question="La requête ci-dessous renvoie toutes les valeurs de toutes les attributs de la table individu." data-comment="Modifie le nom de la table pour afficher toutes les données de la table que tu souhaites..." data-default-text="SELECT * FROM individu"></sql-exercise> 
+            <p>Afin de te familiariser avec la base, tu construis un diagramme entité-relation à partir de ces données que tu as récoltées jusqu'à présent.</p>
+        </div>     
+
+        <div class="grid-item">
+            <h3>Le reste dépend de toi !</h3>
+            <p>
+                Si tu es déjà là, c'est que tu es à l'aise avec SQL, mais tu peux <a id="show-schema">cliquer ici</a> si tu veux voir le diagramme de la base.
+            </p>
+            <div class="clue" id="experienced-schema">
+                <div class="clue-title">Indice</div>
+                <a href="./img/schema.png" target="_blank"><img  src="img/schema.png" width="100%"></a>
+                <div class="clue-title">
+                    <div class="clue-number">2</div>
+                    <div>Relations et colonnes</div>
+                </div>
+            </div>
+        <sql-exercise data-question="Utilise tes connaissances du schéma de la base de données et les commandes SQL pour explorer les données et résoudre ce mystère." data-comment="Lorsque tu penses avoir trouvé qui a commis le meurtre, passe à la section suivante." data-default-text=" "></sql-exercise>
+        <!-- newlines in data-default-text force input to be larger -->
+        
+            <p>Si tu as besoin d'aide en SQL, tu peux toujours visiter <a href="walkthrough.html" target="_blank">cette page</a>.</p>
+        </div>
+
+        <div id="check-solution" class="grid-item">
+                <h3>Vérifie ta solution 👇</h3>
+                <sql-exercise data-question="Avez-vous trouvé le tueur ? " data-comment="" data-default-text="INSERT INTO solution VALUES (1, 'Insérez ici le nom complet de la personne que vous avez trouvée'); 
+    SELECT value FROM solution;"></sql-exercise>
+        </div>
+    </main>
+
+    <footer>
+        <h3>Crédits</h3>
+        <p>"Meurtre et mystère à SQL City" est une adaptation française de l'œuvre <a href="https://mystery.knightlab.com/" target="_blank">"SQL Murder Mystery"</a>.</p>
+        <p>Traduction de la base de donnée automatisée grâce aux API <a href="https://docs.python.org/fr/3/library/sqlite3.html" target="_blank">sqlite3</a>, <a href="https://github.com/psf/requests" target="_blank">requests</a>, <a href="https://pypi.org/project/beautifulsoup4/"  target="_blank">bs4</a> et <a href="https://pypi.org/project/googletrans2/" target="_blank">googletrans</a> pour Python + quelques modifications manuelles. </p>
+        <p>Illustration du tableau d'indices de <a href="https://fr.vecteezy.com/membres/klyaksun" target="_blank">Yuliya Pauliukevich</a> téléchargée gratuitement sur <a href="https://www.vecteezy.com/" target="_blank">Vectors by Vecteezy</a></p>
+        <br>
+        <p><b>"SQL Murder Mystery" :</b></p>
+        <p>Le site original "SQL Murder Mystery" a été créé par <a href="https://twitter.com/joonparkmusic" target="_blank">Joon Park</a> et <a href="https://twitter.com/Cathy_MeiyingHe" target="_blank">Cathy He</a> alors qu'ils étaient au Knight Lab et adapté, et mis en production pour le web par <a href="https://twitter.com/joegermuska" target="_blank">Joe Germuska</a>. Voir le <a href="https://github.com/NUKnightLab/sql-mysteries" target="_blank">GitHub repository</a> pour plus d'informations.</p>
+        <p>Le <a href="https://knightlab.northwestern.edu/" title="Knight Lab | Faire progresser l'innovation dans les médias d'information par l'exploration et l'expérimentation." target="_blank">Knight Lab</a> est rattaché à <a title="Northwestern University" href="http://www.northwestern.edu/" target="_blank">University Northwestern</a> (située aux États-Unis). Il rassemble une équipe de technologues et de journalistes qui travaillent à faire progresser l'innovation dans les médias de l'information par l'exploration et l'expérimentation. Pour voir quelques projets développés par le Knight Lab, c'est par <a href="https://knightlab.northwestern.edu/projects/" target="_blank">ici.</a></p>
+        <p>L'énigme s'inspire d'<a href="https://github.com/veltman/clmystery" target="_blank">un crime survenu à de Terminal City...</a></p>
+        <p>Le SQL basé sur le Web est rendu possible grâce à <a href="https://github.com/sql-js/sql.js/" target="_blank">SQL.js</a></p>
+        <p>Les composants Web personnalisés pour effectuer les requêtes SQL ont été créés et mis dans le domaine public par Zi Chong Kao, créateur de <a href="https://selectstarsql.com/" target="_blank">Select Star SQL.</a></p>
+        <br>
+        <p>Le code original est publié sous la <a href="https://github.com/habored/mystere-sql/blob/master/LICENSE" target="_blank">licence MIT</a></p>
+        <p>Le texte original et les autres contenus sont publiés sous <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank">Creative Commons CC BY-SA 4.0</a></p>
+    </footer>
+    <script type="text/javascript">
+        document.querySelector('#show-schema').addEventListener('click', function() {
+            document.querySelector('#experienced-schema').classList.add('show');
+        })
+    </script>
+</body>
+</html>

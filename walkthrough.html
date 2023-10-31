@@ -1,0 +1,593 @@
+<!DOCTYPE HTML>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/fontfaces.css" />
+    <link rel="stylesheet" href="./css/codemirror.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/neat.css" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css">-->
+    <!-- /CSS -->
+
+    <!-- FAVICONS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="./img/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="./img/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="./img/favicons/manifest.json">
+    <link rel="mask-icon" href="./img/favicons/safari-pinned-tab.svg" color="#2E1D47">
+    <meta name="theme-color" content="#ffffff">
+    <!-- /FAVICONS -->
+
+    <title>Meurtre et mystère à SQL City</title>
+
+    <script src="https://unpkg.com/@webcomponents/custom-elements@1.2.0/custom-elements.min.js"></script>
+    <script src="./scripts/codemirror.js"></script>
+    <script src="./scripts/codemirrorsql.js"></script>
+    <script src="./scripts/autorefresh.js"></script>
+    <script src="./scripts/main.js"></script>
+    <script>
+        window.onload = () => loadData('sql-murder-mystery.db');
+    </script>
+</head>
+<body>
+    
+    <header>
+        <h1>
+            Meurtre et mystère à SQL City
+        </h1>
+        <h2 class="subtitle">Réussiras-tu à résoudre l'enquête ?</h2>
+    </header>
+
+    <main>
+
+        <div class="grid-item">
+            <p>Nous présentons ici la <a href="#blabla">structuration et gestion de l'information</a> avec les bases de données, puis nous expliquons les <a href="#practice">commandes SQL</a> que tu dois connaître. Dès que tu es prêt, tu pourras adapter les exemples pour créer tes propres commandes SQL à la recherche d'indices.</p>
+        </div>
+        <div>
+            <div class="grid-item">
+
+                <h2 id="blabla">Structuration de l'information</h2>
+
+                <h3>Qu'est-ce qu'une base de données ?</h3>
+                <dl>
+                    <dt>Base de données</dt>
+                    <dd>Une base de données est <b>une collection organisée de données</b> conçue pour gérer des données en grandes quantités, complexes ou interconnectées. Elle évite donc autant que possible les <span title="répétitions">redondances</span> d'informations.</dd>
+                </dl>
+                <p>Il existe <b>2 grandes familles de modèles</b> de bases de données :<ul>
+                        <li>Le <b>modèle relationnel</b>, qui utilise des <span title="souvent représentés par des tableaux">ensembles de données</span> reliés entre eux.</li>
+                        <li>Le <b><abbr title="Not Only SQL">NoSQL</b></abbr> qui regroupe différents formats pour stocker des données : documents, paires clef-valeur, graphes, etc. <span title="JSON est un format largement utilisé pour représenter des données structurées en NoSQL">🔍</span></li>
+                    </ul>
+                </p>
+
+                <h3>Qu'est-ce qu'une base de données relationnelle ?</h3>
+                <p>Le modèle relationnel a été développé par <b>Edgar F. Codd</b> en 1960 et formalisé dans les années 1970. </p>
+                <p>Une base de donnée relationnelle se représente généralement sous forme de tableaux reliés entre eux. Ces tableaux ressemblent beaucoup à des feuilles de calcul, mais ils sont appelés <b>tables</b> ou <b>relation</b>. </p>
+                <p>Le terme « relation » vient de la théorie des ensembles et désigne une association entre des éléments de deux ensembles. Dans le modèle relationnel, <b>l'organisation logique et l'organisation physique des données</b> sont indépendants. </p>
+                <dl>
+                    <dt>Base de donnée relationnelle</dt>
+                    <dd>Une <b>base de donnée relationnelle</b> est définie par son <b>schéma relationnel</b>. Le schéma relationnel est créé par le concepteur de la base de données. Il indique la liste des <span title="table à deux dimensions">relations ou entités</span>, et pour chacune d'elles : 
+                    <ul>
+                        <li>son <b>nom</b>,</li>
+                        <li>la <b>liste des <span title="les colonnes de la table">attributs</span></b> (qu'elle met en relation), c'est-à-dire :
+                            <ul>
+                                <li>un <b>nom</b> pour l'attribut</li>
+                                <li>le <b>domaine</b> de valeurs des données qui sont stockées dans cette colonne</li>
+                            </ul>
+                        </li>
+                        <li>le statut de <b><a href="#primary-key">clef primaire</a></b> d'un ou plusieurs attributs,</li>
+                        <li>et <i>éventuellement</i> le statut de <b><a href="#foreign-key">clef étrangère</a></b> d'un attribut. </li>
+                    </ul>            
+                    </dd>
+                </dl> 
+                <figure>
+                    <img src="img/relationEleves.png">
+                    <figcaption>Extrait de données d'une relation "Eleves".</figcaption>
+                </figure>
+                <dl>
+                    <dt id="primary-key">Clef primaire</dt>
+                    <dd>Une <b>clef primaire</b> est un ou plusieurs attributs (colonnes) d'une relation (table) qui permettent d'identifier de manière unique chaque enregistrement (ligne) de cette relation (table).</dd>
+                </dl>
+                <p>Toute relation doit avoir une clef primaire.</p>
+                <p>Dans l'exemple ci-dessus l'attribut <code>eleve_id</code> peut être choisi comme clef primaire s'il est unique pour chaque enregistrement. Ce n'est pas le cas de l'attribut <code>nom</code>, car on peut trouver deux élèves avec le même nom ; même chose pour les autres attributs. Le triplet <code>(nom, prenom, rue)</code> pourrait éventuellement servir de clef. Dans tous les cas, pour avoir la clef primaire d'une relation, il est classique d'ajouter à cette relation un attribut nommé <code>id</code> (ou un autre terme contenant ce raccourci de « identifiant »). Cet attribut est généralement un entier (<code>INTEGER</code>) non nul qui est autoincrémenté (par le <a href="#SGBD">Système de Gestion de Bases de Données</a>) à chaque insertion d'un nouvel enregistrement. Vraiment pratique !</p>
+                <dl>
+                    <dt id="foreign-key">Clef étrangère</dt>
+                    <dd>Une <b>clef étrangère</b> est un attribut (colonne) dans une relation (table) qui ne représente pas directement une donnée, mais qui sert de référence à une autre relation. </dl>
+                    <p>Il n'y a pas toujours de clef étrange dans une relation. </p>
+                </dl>
+                <p>Pour comprendre l'intérêt de ce système de les clefs primaires et étrangères, reprenons l'exemple de la relation <code>Eleves</code> plus haut, et imaginons qu'on veuille ajouter des informations à propos de leur classe (nom de classe, niveau).<br>
+                Dans une approche tabulaire, on ajouterait les attributs <code>classe</code> (VARCHAR), <code>niveau</code> (VARCHAR). Le problème, c'est que pour modifier le nom d'une classe, il faudrait modifier tous les enregistrements des élèves de cette classe. <br>
+                L'approche relationnelle évite cela, en évitant autant que possible la redondance d'informations. Dans cette approche, on préfère créer une nouvelle relation <code>Classes</code> rassemblant les attributs <code>nom</code> (VARCHAR), <code>niveau</code> (VARCHAR) et un attribut <code>id</code> (INTEGER) pour identifier chaque classe. Ainsi, il suffirait d'ajouter un l'attribut <code>classe_id</code> dans la relation <code>Eleves</code> pour y stocker les valeurs de l'identifiant <code>id</code> correspondant à la classe de l'élève. Ainsi, si on veut modifier le nom de la classe, il suffit de modifier une seule fois cette donnée située dans la relation <code>Classes</code>. Dans la relation <code>Eleves</code>, l'attribut <code>classe_id</code> est qualifié de « clef étrangère ».</p>
+                <dl>
+                    <dt id="arite">Ordre, degré ou arité</dt>
+                    <dd>On appelle « ordre », « degré » ou « arité » le <b>nombre d'attributs</b> d'une relation.</dd>
+                    <p>C'est le nombre de colonnes d'un tableau de données.</p>
+                    <dt id="tuple">n-uplet tuple ou enregistrement</dt>
+                    <dd>On appelle « n-uplet », « tuple » ou « enregistrement » d'une relation un <b>ensemble de valeurs ordonnées correspondant aux attributs</b> de cette relation.</dd>
+                    <p>C'est une ligne individuelle de données d'un tableau de données.</p>
+                    <dt id="cardinalite">Cardinalité</dt>
+                    <dd>On appelle cardinalité le <b>nombre de n-uplets</b> d'une relation.</dd>
+                    <p>C'est le nombre de lignes d'un tableau de données.</p>
+                </dl> 
+                <p>Théoriquement, dans un modèle ensembliste, les valeurs des attributs sont toujours définies et uniques. En pratique, on peut trouver des valeurs non définies (dont la valeur est <code>NULL</code> en SQL) ou des valeurs qui se répètent (deux fois ou plus). </p>
+
+                <h3 id="der">Représentation d'une base de données</h3>
+                <p>Au premier abord, les bases de données peuvent impressionner. En effet, elles contiennent souvent de nombreuses relations, et chaque relation contient de nombreuses données. </p>
+                <p>Pour avoir une idée claire des relations entre les données, on utilise une représentation visuelle appelée <b>diagramme entité-relation</b>.</p>
+                <dl>
+                    <dt>Diagramme entité-relation</dt>
+                    <dd>Un diagramme entité-relation est une <b>représentation visuelle du schéma relationnel</b> d'une base de données sous forme de tableaux reliés entre eux.</dd>
+                </dl> 
+                <figure>
+                    <table class="sqltable">
+                        <tr>
+                            <th colspan="2">Eleves</th>
+                        </tr>
+                        <tr>
+                            <td><b><u>eleve_id</u></b></td>
+                            <td>INTEGER</td>
+                        </tr>
+                        <tr>
+                            <td>nom</td>
+                            <td>TEXT</td>
+                        </tr>
+                        <tr>
+                            <td>prenom</td>
+                            <td>TEXT</td>
+                        </tr>
+                        <tr>
+                            <td>rue</td>
+                            <td>TEXT</td>
+                        </tr>
+                        <tr>
+                            <td>ville</td>
+                            <td>TEXT</td>
+                        </tr>
+                        <tr>
+                            <td>code_postal</td>
+                            <td>TEXT</td>
+                        </tr>
+                    </table>
+                    <figcaption>Le tableau qui pourrait représenter la relation <code>Eleves</code> dans un diagramme entité-relation.</figcaption>
+                </figure>
+                <p>Dans un diagramme entité-relation :<ul> 
+                    <li>Chaque <b>relation</b> est représentée par un <b>tableau</b>. Et dans chaque tableau, on a : 
+                    </li>
+                        <li>Le <b>nom de la relation</b>, écrit tout en haut et généralement  en gras.</li>
+                        <li>La <b>liste des attributs</b> dans le corps de la boîte, avec leur <b>nom</b> et le <b>domaine</b> des valeurs. </li>
+                        <li>Les <b>liens entre les attributs de différentes relations</b> sont représentés par des flèches allant d'une clef étrangère d'un tableau vers la primaire d'un autre tableau.<br>
+                        De plus, ces liens peuvent être avoir un nom pour décrire  (p. ex., "a joué dans", "donne une note à").
+                            <ul>
+                                <li>Les attributs servant de <b>clefs primaires</b> sont identifiés par un symbole (p. ex., 🔑, ★, <abbr title="Clef Primaire">CP</abbr>, <abbr title="Primary Key">PK</abbr>) ou par un style particulier (p. ex., gras ou souligné).</li>
+                                <li>Les attributs servant de  <b>clefs étrangères</b> peuvent aussi être identifiés par un symbole (p. ex., ⚿, ☆, ↗, <abbr title="Foreign Key">PF</abbr>) ou par un style particulier (p. ex., italique).</li>
+                            </ul> 
+                        </li>
+                    </ul>
+                </p>  
+            </div>
+        </div>
+
+        <div>
+            <div class="grid-item">
+
+                <h2 id="SQL">Communication avec une base de données</h2>
+
+                <h3>Des requêtes pour interroger une base de données </h3>
+                <p>Pensons à toutes les données stockées par des géants du numérique comme Amazon (produits et clients) ou Facebook (avec tous les comptes, tous les contenus textes, photos, vidéos, ... depuis toutes ces années). Tout cela est stocké dans des bases de données relationnelles ; des bases tellement énormes qu'il est impossible de parcourir tous les tableaux ligne par ligne pour trouver des informations. Heureusement, il y a les <b>requêtes</b> !</p> 
+                <dl>
+                    <dt>Requête</dt>
+                    <dd>Une requête est une <b>commande</b> qui permet de sélectionner, d'ajouter, de modifier ou de supprimer des données.</dd>
+                </dl>
+                <h3>Qu'est-ce que SQL ?</h3>
+                <dl>
+                    <dt>SQL</dt>
+                    <dd>SQL est un <b>langage déclaratif conçu pour écrire des requêtes</b> aux bases de données relationnelles.</dd>
+                </dl>
+                <p>
+                <ul>
+                    <li>SQL est l'acronyme de <b><i>Structured Query Language</i></b> que l'on peut traduire par <b>Langage de requête structurée</b>.</li>
+                    <li>C'est un langage informatique <b>déclaratif</b>, c'est-à-dire qu'il permet de décrire le résultat souhaité, sans décrire la manière de l'obtenir. <span>HTML et Latex sont des exemples de langages déclaratifs, contrairement à Python ou C++.</span>🔍</li>
+                    <li>SQL est propre aux bases de données relationnelles. Les autres types de bases de données utilisent d'autres langages pour effectuer des requêtes.</li>
+                </ul>
+                </p>
+                <h4>Quelques ressources  sur le web</h4>
+                <p>Si tu as besoin d'apprendre le SQL, voici quelques liens vers des sites web :
+                     <ul>
+                        <li>des <a href="https://sql.sh/cours" target="_blank">fiches de cours</a> et  quelques <a href="https://sql.sh/exercices-sql/" target="_blank">exercices</a> sur le site sql.sh</li>
+                        <li><a href="http://webtic.free.fr/sql/index.htm" target="_blank">des cours très complets et des exercices</a></li>
+                        <li><a href="https://fxjollois.github.io/cours-sql/" target="_blank">un site pour s'entraîner</a></li>
+                        <li><a href="http://deptfod.cnam.fr/bd/tp" target="_blank">des TP du CNAM</a></li>
+                        <li><a href="https://colibri.unistra.fr/fr/course/list/notions-de-base-en-sql">des exercices d'un projet libre de l'université de Strasbourg</a></li>
+                    </ul>
+                </p> 
+
+                <h3>Et SQLite ?</h3>
+                <p>SQLite est un Système de Gestion de Bases de Données Relationnelle très répandu. Il en existe d'autres, tels que MySQL, PostgreSQL ou MariaDB. Dans tous les cas, le langage utilisé est le SQL (avec quelques légères différences selon les systèmes).</p>
+                <p><a href="https://db-engines.com/en/ranking" target="_blank">Top mondial des SGBD (🇬🇧)</a></p> 
+            </div>
+        </div>
+
+        <div>
+            <div class="grid-item">
+                <h2>La gestion des données</h2>
+
+                <h3 id="SGBD">Système de Gestion de Bases de Données</h3>
+                <dl>
+                    <dt>Système de Gestion de Bases de Données (ou SGBD)</dt>
+                    <dd>Un Système de Gestion de Bases de Données (ou SGBD) est un <b>logiciel</b> permettant à un ou plusieurs utilisateurs d'effectuer de manière efficace des opérations sur une grande quantité d'informations stockées sur des mémoires partagées (que la base soit relationnelle ou non).</dd>
+                </dl>
+                <p>Le concepteur définit la structure, et le SGBD gère le reste, à savoir : 
+                    <ul>
+                        <li>la disponibilité des données : Le SGBD permet de <b>réaliser des opérations</b> telles que la sélection de données, l'ajout de nouvelles données, la modification de données existantes et la suppression de données ;</li>
+                        <li>les <b>accès concurrents</b> (quand plusieurs personnes modifient en même temps la base) ;</li>
+                        <li>la sécurité : Le SGBD sécurise les accès par la <b>gestion des autorisations</b> (en mode lecture/écriture, et en parties) ;</li>
+                        <li>le stockage / persistance : Le SGBD assure la maintenance des différentes copies de la base de données (en cas de panne d'un ordinateur). On parle de <b>persistance</b> des données.</li>
+                    </ul> 
+                </p>
+                <p>Dans un SGDB <i>relationnel</i> (ou SGBDR), le logiciel veille aussi à ce que les opérations sur les <b>relations respectent le schéma relationnel</b> et gère généralement les opérations sous forme de transactions.</p>
+                <dl>
+                    <dt>Transaction</dt>
+                    <dd>Une transaction est une opération (ou un ensemble d'opérations) effectuée sur une base de données qui, par définition, est : 
+                        <ul>
+                            <li><b>atomique</b> : elle est exécutée dans son intégralité ou bien pas du tout, </li>
+                            <li><b>cohérente</b> : elle respecte les contraintes de la base de données, </li>
+                            <li><b>isolée</b> : elle ne doit pas affecter les autres transactions </li>
+                            <li><b>durable</b> : elle est enregistrée sur un stockage persistant.</li>
+                        </ul>
+                    </dl>
+                </dd> 
+
+                <h3>Intégration des SGBD dans les systèmes d'informations</h3>
+                <p>L'architecture d'un SGBD est généralement organisée en plusieurs niveaux ou couches pour permettre une gestion optimale des données. </p>
+                <h4>Architecture 2-tiers</h4>
+                </p>La première génération (dans les années 1980) était basée sur un modèle à deux niveaux encore appelé Client/Serveur mais aujourd'hui appelé 2-<span title="tier se traduit par étage, niveau">tiers</span>. Cette approche donne une place centrale aux outils de bases de données, installés sur les postes clients. En d'autres termes, l'application cliente est fortement dépendante de la base de données. Par exemple, une modification de la structure de la base de données nécessite un redéploiement sur les postes clients.</p>
+                <h4>Vers les modèles n-tiers</h4>
+                <p>Avec l'augmentation de la taille des bases de données, du nombre de postes clients et de connexions simultanées et la diversification des clients (entreprises elles-mêmes, mais aussi partenaires et clients) et plus tard avec la dispersion des données sur plusieurs serveurs, le modèle 2-tiers a montré ses limites, et la montrée en puissance des technologies réseaux a permis le développement (dans les années 90) d'autres architectures plus adaptées aux enjeux actuels. </p>
+                <p>L'architecture s'est modifiée en déplaçant le plus de tâches possibles des logiciels clients vers les logiciels côté serveur (<i>thin clients</i> versus <i title="A traduire par clients lourds, et non gros clients..">fat clients</i>). Plutôt que tout mettre côté serveur, une couche intermédiaire a été créé entre le client et la base de données, donnant ainsi une architecture 3-tiers. </p>
+                <dl>
+                    <dt><h4>Architecture 3-tiers</h4></dt>
+                    <dd>
+                        L'architecture à 3-tier est, comme son nom l'indique, une architecture en 3 niveaux qui permettent de séparer :
+                        <ul>
+                            <li>La couche <b>présentation</b> : c'est l'IHM pour les usagers. </li>
+                            <li>La couche <b>traitement</b> : c'est la partie qui analyse </li>
+                            <li>La couche de <b> données</b> : c'est la partie stockage.
+                            </li>
+                        </ul>
+                    </dd>
+                    <dt>La couche présentation</dt>
+                    <dd>
+                        <ul>
+                            <li>La couche présentation est le logiciel client qui <b>sert d'interface Homme-machine</b>. Elle s'occupe essentiellement <b>de l'affichage et de l'interaction</b>, bien qu'elle puisse effectuer quelques traitements basiques (p. ex., champs obligatoires, validation des données). </li>
+                            <li>Cette couche <b>ne communique qu'avec la couche traitement</b> : elle envoie des <i>commandes-utilisateur</i> à la couche traitement et reçoit des <i>réponses</i> de la couche traitement.</li>
+                        </ul>
+                    </dd>
+                    <p>Le logiciel de la couche présentation est généralement un <b>navigateur web</b>, mais cela peut être un autre type d'application, graphique ou textuelle ; p. ex. distributeur de billets, console de jeu. </p>
+                    <dt>La couche traitement</dt>
+                    <dd>
+                        <ul>
+                            <li>La couche traitement implémente la <b>logique métier</b>, c'est-à-dire qu'elle gère le traitement des requêtes selon certaines règles, en effectuant des opérations telles que la validation des données, des calculs ou la gestion des flux. </li>
+                            <li>Cette couche joue le rôle d'<b>intermédiaire entre la (ou les) base(s) de données et les différents clients</b> : 
+                                <ul>
+                                    <li>Elle reçoit les commandes-utilisateur de la couche présentation, créer à partir de cela une requête, puis envoie cette requête à la couche suivante, celle des données. </li>
+                                    <li>Dans un second temps, elle recevra le ou les <i>résultats de sa ou ses requêtes</i> de la couche accès aux données, puis traduira ce résultat en une <i>réponse</i> adaptée client, pour enfin envoyer cette réponse au client qui en a fait la demande.</li>
+                                </ul> 
+                            </li> 
+                        </ul>
+                    </dd> 
+                    <dt>La couche de données</dt>
+                    <dd>
+                        <ul>
+                            <li>La couche de données (ou couche d'accès aux données) inclut un SGBD sur un serveur. Elle gère donc le stockage durable, l'accès sécurisé, l'intégrité des données, etc. </li>
+                            <li>Cette couche reçoit les <i>requêtes</i> envoyées par la couche traitement, interroge la base de données, puis envoie le <i>résultat</i> à la couche traitement</li>
+                        </ul>
+                    </dd>
+                </dl>
+                <p>La tendance actuelle est à l'<b>architecture n-tiers</b>. Dans ce type d'architecture, l'analyse des informations est elle-même décomposée en plusieurs couches. Par exemple, si la couche de données est distribuée sur plusieurs serveurs, il peut être intéressant d'avoir un middleware ou autre fournisseur de service pour s'occuper de faire le lien.</p>
+
+                <h2 id="practice">Let's go !</h2> 
+
+                <p>Les cellules suivantes sont connectées à la base de données de la section de police "Meurtres et Mystères". Elles permettent d'exécuter des requêtes SQL sur cette base. </p>
+                <p> Tu peux exécuter n'importe quelle requête SQL dans n'importe quelle cellule, peu importe ce qu'il y avait au départ dans cette cellule.</p>
+
+                <h3>Obtenir une vue globale de la base de données</h3>
+                <p>En SQLite, la relation <code>sqlite_master</code> est un bon point d'entrée pour savoir à quoi ressemble la base de données avec laquelle on doit travailler. Cette relation est présente dans n'importe quelle base de données gérée par SQLite. En effet, c'est SQLite qui la gère est s'en sert pour stocker diverses informations sur la structure de la base de données elle-même. </p>
+                <p>Cette relation contient notamment les noms (dans la colonne <code>tbl_name</code>) et les commandes <code>sql</code> qui ont permis de créer les autres relations de la base.</p>
+                <figure>
+                    <table class="sqltable">
+                        <tr>
+                            <th colspan="2">sqlite_master</th>
+                        </tr>
+                        <tr>
+                            <td>type</td>
+                            <td>TEXT</td>
+                        </tr>
+                        <tr>
+                            <td>name</td>
+                            <td>TEXT</td>
+                        </tr>
+                        <tr>
+                            <td>tbl_name</td>
+                            <td>TEXT</td>
+                        </tr>
+                        <tr>
+                            <td>rootpage</td>
+                            <td>INTEGER</td>
+                        </tr>
+                        <tr>
+                            <td>sql</td>
+                            <td>TEXT</td>
+                        </tr>
+                    </table>
+                    <figcaption>Diagramme de la relation particulière "sqlite_master"</figcaption>
+                </figure> 
+                <sql-exercise data-question="La requête ci-dessous renvoie toutes les commandes qui permettent de créer les relations que contient la base de données." data-comment="Cette commande est spécifique à SQLite. Les autres bases de données ont leur syntaxe spécifique." data-default-text="SELECT sql FROM sqlite_master WHERE type='table';"></sql-exercise> 
+
+                Voici le diagramme entité-relation que l'on peut déduire de ces informations :
+                <figure>
+                    <a href="img/schema.png" target="_blank" id="diagram"><img src="img/schema.png"></a>
+                    <figcaption>Diagramme entité-relation base de données de la police.</figcaption>
+                </figure> 
+
+                <sql-exercise data-question="Combien de personnes y a-t-il dans cette base de données ?" data-comment="Le nom de la table est ici 'individu', mais il peut être remplacé par n'importe quel autre nom de table de la base. Il suffit d'essayer !" data-default-text="SELECT COUNT(*) FROM individu;"></sql-exercise>
+
+                <h3>Remarques générales sur le langage SQL</h3>
+                <p>Les commandes SQL ne sont <b>pas <a href="https://fr.wikipedia.org/wiki/Sensibilit%C3%A9_%C3%A0_la_casse">sensibles à la casse</a></b>.  Ainsi, la commande ci-dessus peut s'écrire : <code>select sql from sqlite_master where type='table';</code><br>
+                Toutefois, on préfère écrire :<br>
+                <code>SELECT sql FROM sqlite_master WHERE type='table';</code><br>
+                Cette façon de faire permet de mieux distinguer entre <b>les mots-clefs SQL sont en majuscules et les valeurs des variables en minuscules</b>. 
+                <p>Dans tous les cas, les valeurs de type caractère ou chaînes de caractères doivent être écrites en <b>respectant la casse</b>. Pour cette raison, <code>SELECT name FROM sqlite_master WHERE type = '<u>T</u>able';</code> ne renverra rien.</p>
+                <p>Une commande SQL peut également être réalisée <b>sur plusieurs lignes</b> pour une meilleure lisibilité. Ainsi, la commande ci-dessus peut s'écrire :<br>
+                <code>SELECT sql <br>FROM sqlite_master <br>WHERE type='table';</code></p>
+                <p>La plupart des <abbr title="Systèmes de Gestion de Bases de Données">SGBD</abbr> exigent de <b>terminer une requête par un point-virgule (';')</b>, même si le système utilisé par cette page Web est plus indulgent.</p>
+
+                <h3>Quelques commandes</h3>
+
+                <h4>Connaitre tous les <a href="#attribut">attributs</a> d'une relation</h4>
+                <sql-exercise data-question="L'instruction ci-dessous renvoie les données de tous les attributs pour 1 enregistrement de la relation individu. Elle affiche aussi les noms des attributs en entête des colonnes." data-comment="Pour connaitre les attributs d'une relation, il suffit de mettre le signe * après le mot-clef SELECT. L'ajout en fin de requête de LIMIT 1 permet de n'afficher que le premier enregistrement. To limit signifie « limiter »."
+                    data-default-text="SELECT * FROM individu LIMIT 1;"></sql-exercise>
+                <p>Tu peux essayer avec d'autres relations et avec d'autres quantités d'enregistrements.</p>
+                <p id="#limit">La clause <code>LIMIT</code> (ou parfois TOP) doit être placée <u>à la toute fin de la requête</u></p>
+                <p>Pour afficher entièrement une relation, c'est la même commande, mais sans la clause LIMIT. </p>
+
+                <h4>Connaitre <a href="#cardinalite" title="le nombre d'enregistrements qu'il y a dans">la cardinalité</a> d'une relation</h4>
+                <sql-exercise data-question="L'instruction ci-dessous renvoie le nombre d'enregistrements qu'il y a dans la relation individu" data-comment="On utilise la fonction COUNT. To count signifie « compter »."
+                    data-default-text="SELECT COUNT(*) FROM individu;"></sql-exercise>
+
+                <h4>Afficher les valeurs de certains attributs seulement</h4>
+                <sql-exercise data-question="L'instruction ci-dessous renvoie les données pour les attributs nom_complet et nom_rue de 5 enregistrements de la relation individu (au lieu d'afficher toutes les colonnes)." data-comment=""
+                    data-default-text="SELECT nom_complet, nom_rue FROM individu LIMIT 5;"></sql-exercise>                
+                <p>Tu peux essayer avec d'autres attributs et d'autres relations. </p>
+
+                <h4>Connaitre toutes les valeurs possibles d'un attribut</h4>
+                <p>Lorsqu'on travaille avec des données, il est toujours intéressant de vérifier les valeurs utilisées pour certains attributs, notamment ceux qui représentent une catégorie. </p>
+                <sql-exercise data-question="L'instruction ci-dessous renvoie toutes les données différentes qu'on peut trouver dans la colonne nom_rue de la relation individu" data-comment="Certains enregistrements ont le même nom de rue. Sans le mot-clef DISTINCT, le nom de rue sera répété. Avec le mot-clef DISTINCT, il n'y aura pas de répétition."
+                    data-default-text="SELECT DISTINCT nom_rue FROM individu;"></sql-exercise>
+                <p>Tu peux essayer avec l'attribut type de relation rapport ? </p>
+
+                <h3>Anatomie d'une requête SQL</h3>
+                <p>Une requête SQL peut contenir des éléments variés :
+                    <ul>
+                        <li>Les <a href="#keywords">mots-clefs SQL</a> (p. ex., <code>​SELECT</code>​, <code>​FROM</code>​)</li>
+                        <li>Des noms d'attributs (p. ex., nom_complet, nom_rue)</li>
+                        <li>Des noms de relations (p. ex., ​individu, rapport)</li>
+                        <li>Des <a href="#regex">caractères génériques</a> (p. ex., ​<code>%</code>)</li>
+                        <li>Des <a href="#agregation">fonctions</a> (p. ex., ​<code>COUNT</code>)</li>
+                        <li>etc</li>
+                    </ul>
+                </p> 
+                 
+                <h3 id='keywords'>Mots-clefs des principales opérations sur les relations</h3>
+                <dl>
+                    <dt>SELECT ... FROM</dt>
+                    <dd>permet de <b>lire</b> des données.</dd>
+                       <code>SELECT</code> commande la <b>récupération</b> des données : 
+                        <ul>
+                            <li>
+                                dans toutes les colonnes avec <code>SELECT *</code>
+                            </li>
+                            <li>
+                                dans une colonne spécifique <code>SELECT <i title="À remplacer par un vrai nom de colonne">colonne</i></code>
+                            </li>
+                            <li>
+                                dans plusieurs colonnes spécifiques <code>SELECT <i title="À remplacer par un vrai nom de colonne">colonneA</i>, <i title="À remplacer par un vrai nom de colonne">colonneB</i></code>
+                            </li>
+                        </ul> 
+                        <code>FROM</code> <b>indique la relation</b> (ou les relations) dans laquelle il faut aller chercher les données. 
+                        <p>Comme avec les attributs, il est possible d'utiliser la virgule (,)pour indiquer plusieurs noms de tables. Toutefois, le résultat peut s'avérer surprenant et indésirable lorsqu'on débute. S'il est nécessaire de manipuler des données réparties dans plusieurs relations, on préférera diviser le travail en plusieurs requêtes ou utiliser JOIN. </p> 
+                    <dt>INSERT INTO</dt>
+                    <dd>permet d'<b>ajouter</b> un nouvel enregistrement à une relation.</dd>
+                    <dt>UPDATE</dt>
+                    <dd>permet de <b>modifier</b> les valeurs d'enregistrements existants déjà dans une relation.</dd>
+                    <dt>DELETE</dt>
+                    <dd>permet de <b>supprimer</b> des enregistrements d'une relation.</dd>
+                </dl>   
+
+                <h3 id='keywords'>Filtrer les résultats selon les valeurs</h3>
+                <dl>
+                <dt>WHERE</dt>
+                <dd>​WHERE​ permet de <b>filtrer les enregistrements en fonction de valeurs particulières</b>.</dd>
+                <p>​La clause WHERE​ s'ajoute <u>après</u> le couple SELECT-FROM. </p>
+                <p>Faisons quelques essais.</p>
+                <sql-exercise data-question="Voici une requête pour tout savoir sur une personne spécifique à partir de son nom complet. " data-comment="Il faut délimiter les valeurs de type chaîne de caractères avec des guillemets ('). " data-default-text="SELECT * FROM individu WHERE nom_complet = 'Kinsey Erickson';"></sql-exercise>
+                
+                <p>Il existe plusieurs outils pour préciser la condition que les valeurs des attributs doivent respecter. En voici quelques-uns.</p>
+                <h4>Les opérateurs de comparaison</h4>
+                <p>Ci-dessous <code><i>attribut</i></code> désigne le nom de l'attribut (p. ex., nom_complet), et <code><i>val</i></code> désigne une valeur particulière (p. ex., "Kinsey Erickson").</p>
+                <ul> 
+                    <li><code><i>attribut</i> = <i>val</i></code> : la valeur de l'attribut doit être <b>égale à</b> val. </li>
+                    <li><code><i>attribut</i> <> <i>val</i></code> : la valeur de l'attribut doit être <b>différente de</b> val. </li>
+                    <li><code><i>attribut</i> &lt; <i>val</i></code> : la valeur de l'attribut doit être <b>strictement inférieure à</b> val. </li>
+                    <li><code><i>attribut</i> &lt;= <i>val</i></code> : la valeur de l'attribut doit être <b>inférieure ou égale à</b> val.</li>
+                    <li>Il y a aussi <code>&gt;</code> et <code>&gt;=</code>. </li>
+                </dl>
+                <p><code><i>attribut</i> = <i>val</i></code> (par exemple) forme une <b>condition</b>.</p>
+                <h4>Les opérateurs logiques</h4>
+                <p>AND et OR permettent de combiner plusieurs critères/conditions en une seule.</p>
+                <ul>
+                    <li><code>​AND​</code> permet d'obtenir les enregistrements qui répondent à <b>plusieurs conditions</b> (à chacune des conditions, sans exception).<br>
+                    Par exemple <code><i>conditionA</i> AND <i>conditionB</i> AND <i>conditionC</i></code> permet d'obtenir les enregistrements qui répondent à ces 3 conditions. </li>
+                    <li><code>OR</code> permet d'obtenir les enregistrements qui répondent à <b>au moins l'une des conditions</b>.<br>
+                    Par exemple <code><i>conditionA</i> OR <i>conditionB</i> OR <i>conditionC</i></code> permet d'obtenir les enregistrements qui répondent à au moins l'une de ces 3 conditions. </li>
+                    <li><code>NOT</code> permet de prendre le <b>contraire d'un critère/condition</b>.<br>
+                    Par exemple <code>NOT(<i>conditionA</i>)</code> permet d'obtenir les enregistrements qui ne répondent pas à la conditionB. </li>
+                </ul> 
+                <p>Le plus simple est d'essayer.</p>
+                <sql-exercise data-question="Voici une requête qui renvoie toutes les données de tous les enregistrements de la table rapport qui ont à la fois la valeur 'vol de bien' dans la colonne type et 'Chicago' dans la colonne ville." data-comment="Les valeurs indiquées doivent exister dans la base. Essaie de remplacer 'Chicago' par 'chicago' et d'exécuter l'instruction. Modifie cette requête SQL pour trouver le premier indice. Rappel : Le meurtre a eu lieu le 15 janvier 2018​ à ​SQL City​. On veut seulement la description. "
+                    data-default-text="SELECT * FROM rapport 
+WHERE type = 'vol de bien' 
+AND ville = 'Chicago';" data-solution="SELECT description FROM rapport 
+WHERE type = 'meurtre' 
+AND ville = 'SQL City'
+AND date = 20180115;"></sql-exercise>
+                <p>Si tu as compris la requête à exécuter, elle devrait afficher le rapport de la scène du crime, alors félicitations. </p>
+                <p>Sinon, tu peux continuer à chercher, ou cliquer sur « Afficher la solution ». Il faudra juste supprimer le <code>/*</code> initial avant d'exécuter la requête. </p>  
+
+                <p>Lorsqu'on ne sait pas comment les chaînes de caractères sont stockées dans la base de données, on peut utiliser les fonctions <code>UPPER()</code> et <code>LOWER()</code>.</p>
+
+                <sql-exercise data-question="Essaie les fonctions UPPER() et LOWER() pour comprendre comment elles fonctionnent." data-comment="" data-default-text="SELECT DISTINCT ville FROM rapport WHERE LOWER(ville) ='sql city';"></sql-exercise>
+
+                <h3 id="agregation">Fonctions d'agrégation</h3>
+                <p>Pour répondre à certaines questions, telles que « Qui est la personne la plus riche ? » ou « Qui est la personne la plus jeune ? », les opérateurs de comparaison ne suffisent pas, mais les <b>fonctions d'agrégation</b> sont là pour nous aider. La fonction  <code>COUNT</code> vue précédemment est une fonction d'agrégation. Agréger, c'est rassembler en un tout. Il y en a d'autres : </p>
+                <code>MAX(<i title="À remplacer par un vrai nom d'attribut">attribut</i>)</code><dd> trouve la plus grande des valeurs de l'attribut indiqué.</dd>
+                <code>MIN(<i title="À remplacer par un vrai nom d'attribut">attribut</i>)</code><dd>trouve la plus petite des valeurs de l'attribut indiqué.</dd>
+                <code>SUM(<i title="À remplacer par un vrai nom d'attribut">attribut</i>)</code><dd>calcule la somme de valeurs de l'attribut indiqué.</dd>
+                <code>AVG(<i title="À remplacer par un vrai nom d'attribut">attribut</i>)</code><dd>calcule la moyenne de valeurs de l'attribut indiqué.</dd>
+                <code>COUNT​(<i title="À remplacer par un vrai nom d'attribut">attribut</i>)</code><dd>compte le nombre de valeurs de l'attribut indiqué.</dd>
+          
+                <sql-exercise data-question="La requête ci-dessous permet d'obtenir le plus vieux titulaire de permis de conduire." data-comment="" data-default-text="SELECT MAX(age) FROM permis_auto;"></sql-exercise>
+
+                <h3>Trier les résultats</h3>
+                <p>Il existe une autre façon de trouver les valeurs minimales et maximales, tout en affichant davantage de données. En effet, on peut contrôler l'ordre de tri des résultats obtenus, en ajoutant la clause <code>ORDER BY(<i title="À remplacer par un vrai nom d'attribut">attribut</i>)</code> <u>entre la clause WHERE et la clause LIMIT</u>. </p>
+                <sql-exercise data-question="La requête ci-dessous permet d'obtenir toutes les données de la relation permis_auto, mais en les classant selon l'âge du titulaire et en donnant les 10 premiers enregistrements. " data-comment="On peut supprimer ASC qui indique l'ordre croissant, qui est l'ordre par défaut. On peut aussi le remplacer par DESC pour indiquer un ordre décroissant. Tu peux aussi essayer de trier sur d'autres colonnes pour voir le résultat." data-default-text="SELECT * FROM permis_auto ORDER BY age ASC LIMIT 10;"></sql-exercise>
+                <p>À présent, tu connais suffisamment SQL pour identifier le premier témoin. Essaie !</p>
+                <sql-exercise data-question="Écrire une requête qui permet d'identifier le premier témoin. " data-comment="Il existe plusieurs façons de le faire, c'est pourquoi il peut y avoir marqué Incorrect même avec requête qui permet d'obtenir la réponse." data-default-text="
+
+
+" data-solution="SELECT * FROM individu 
+WHERE nom_rue = 'Northwestern Dr' 
+ORDER BY numero_rue DESC LIMIT 1;"></sql-exercise>
+                <p><b>Remarque. On peut trier selon plusieurs colonnes. </b></p> 
+                <sql-exercise data-question="Cette requête permet d'obtenir les enregistrements de la relation membre_gymfit, triés en fonction de leur 'carte_membre' et de leur 'nom_complet'." data-comment="Les résultats seront principalement triés selon la carte, et à l'intérieur de chaque groupement par carte, ils sont triés par ordre alphabétique des noms." data-default-text="SELECT * FROM membre_gymfit ORDER BY carte_membre, nom_complet;"></sql-exercise>
+
+                <h3 id='wildcards'>Obtenir des informations à partir de données partielles</h3>
+
+                <p>Parfois, on n'a pas une valeur constante complète, mais seulement des données partielles. Par exemple, comment faire pour chercher toutes les personnes dont le nom commence par le caractère C ?</p>
+                <p>Dans ce cas, de nombreux langages, SQL Pour cela, on utilise les <b>expressions régulières</b>. 
+                <dl>
+                    <dt id="regex">Expression régulière</dt>
+                    <dd>Une expression régulière est un <b>modèle de texte</b>. C'est une chaîne de caractères qui combine des caractères standard et des caractères génériques pour décrire un modèle de chaînes de caractères possibles. </dd>
+                    <dt>Caractère générique</dt>
+                    <dd>Un caractère générique (<i>wildcards</i> en anglais) est un symbole spécial utilisé pour représenter des caractères inconnus. </dd>
+                </dl>
+                <p>Comme de nombreux autres langages, SQL permet d'utiliser des expressions régulières.</p>
+                <p>Le caractère générique le plus courant est <code>%</code>. </p>
+                <sql-exercise data-question="Voici une requête qui permet d'obtenir les enregistrements pour lesquels la valeur correspondant à l'attribut nom commence par 'Cha'." data-comment="Le signe = est remplacé par le mot-clef LIKE, qu'on peut traduire ici par « comme »" data-default-text="SELECT * FROM individu WHERE nom_complet LIKE 'Cha%';"></sql-exercise>
+                <sql-exercise data-question="Voici une requête qui permet d'obtenir les enregistrements de la relation individu pour lesquels la valeur correspondant à l'attribut nom_complet commence par 'Cha' et termine par 'e'." data-comment="Le caractère générique % remplace n'importe quels caractères, en n'importe quelle quantité. Trouveras-tu la commande pour afficher les enregistrements de individu pour lesquels la valeur nom_complet contient 'bob' ?" data-default-text="SELECT * FROM individu WHERE nom_complet LIKE 'Cha%e';"></sql-exercise>
+                <p>La sensibilité à la casse lors de l'utilisation de l'opérateur LIKE  dépend de la configuration de la base de données <span title="Cela dépend de la collation, qui est un ensemble de règles qui détermine comment les caractères doivent être triés et comparés.">🛈</span>. </p>
+                <p>L'autre caractère générique pris en charge par SQL est <code>_</code>.</p>
+                <p>L'expression régulière <code>"B_b"</code> correspondrait par exemple à "Bab", "Bbb", "Bcb", "B1b", "Bob", mais pas à "Babe" ni à "Bb".</p> 
+                <dl>
+                    <dt>LIKE</dt>
+                    <dd><code>LIKE</code> permet de comparer une chaîne de caractères avec un modèle de texte en utilisant des caractères génériques.</dd>
+                </dl>
+                <sql-exercise data-question="Voici une requête qui permet d'obtenir les différentes valeurs de l'attribut ville (avec SELECT DISTINCT ville) de la relation rapport (FROM rapport) pour les enregistrements pour lesquels la valeur correspondant à l'attribut ville est commence par 'Irvin' et contient 6 caractères." data-comment="Teste quelques variantes telles que 'Irvin_', 'B_b%'. Trouveras-tu la commande pour afficher les noms de villes de 4 caractères et qui terminent par un 'o' ?" data-default-text="SELECT DISTINCT ville 
+FROM rapport 
+WHERE ville LIKE 'Irvin_';"></sql-exercise>
+                <p>Lorsqu'on ne sait pas comment les chaînes de caractères sont stockées dans la base de données, on peut utiliser les fonctions <code>UPPER()</code> et <code>LOWER()</code>, par exemple avec <code>SELECT * FROM rapport WHERE UPPER(ville) LIKE UPPER('Irvin_');</code></p>
+                <sql-exercise data-question="Écrire une requête qui permet d'identifier le second témoin. " data-comment="Il existe plusieurs façons de le faire, c'est pourquoi il peut y avoir marqué Incorrect même avec requête qui permet d'obtenir la réponse." data-default-text="
+
+
+                " data-solution="SELECT * FROM individu 
+                WHERE nom_complet LIKE '%Annabel%'
+                AND nom_rue = 'Franklin Ave';"></sql-exercise>
+                <dl>
+                    <dt>BETWEEN</dt>
+                    <dd><code>BETWEEN</code> permet de vérifier si une valeur se situe dans une plage donnée. </dd>
+                </dl>
+                <p>Voici un exemple d'utilisation  :
+                <sql-exercise data-question="Cette requête qui permet d'obtenir les enregistrements de la relation permis_auto pour lesquels la valeur correspondant à l'attribut age est comprise entre 20 et 30." data-comment="Between signifie « entre ». Les personnes âgées de 20 ou 30 ans tout pile sont incluses. " data-default-text="SELECT * FROM permis_auto WHERE age BETWEEN 20 AND 30;"></sql-exercise> 
+                <sql-exercise data-question="Voici un autre exemple qui montre que BETWEEN prend en charge les expressions régulières." data-comment="" data-default-text="SELECT DISTINCT ville 
+FROM rapport 
+WHERE ville BETWEEN 'W%' AND 'Z%';"></sql-exercise>
+                    
+            </div>
+        </div>
+
+        <div id="joins">
+            <div class="grid-item">
+                <h2>Faire des liens entre les relations</h2>
+                <p>Jusqu'à présent, nous avons posé des questions auxquelles il est possible de répondre en considérant les données d'une seule relation. Mais que se passe-t-il si nous besoin d'utiliser simultanément des données provenant de plusieurs relations ? </p>
+                <p>Lorsqu'on a besoin d'utiliser simultanément des données provenant de plusieurs relations, on utilise <code>JOIN</code>.</p>
+                <p>Les utilisateurs SQL expérimentés utilisent différents types de jointures telles que <code>INNER JOIN</code>, <code>OUTER JOIN</code>, <code>LEFT JOIN</code> ou <code>RIGHT JOIN</code>. Le plus courant est <code>INNER JOIN</code> (ou juste <code>JOIN</code>).</p>
+                <p>Les mot-clefs de la clause à retenir est <code>JOIN .. ON</code>.</p>
+                <p>La manière la plus courante de joindre des relations consiste à faire correspondre la clef primaire de la première relation avec la clef étrangère de la seconde relation ; le cas s'y prête généralement.</p>
+                <p>Voici un lien vers le <a href="#diagram">diagramme entité-relation</a> de la base de données de la police si besoin. </p>
+                <sql-exercise data-question="Cette requête permet d'obtenir les noms de la relation 'individu' et les salaires annuels de la relation 'revenu', en faisant correspondre les valeurs des attributs nir présent dans ces deux relations. " data-comment="Modifie la requête pour renvoyer plus de données ou pour rechercher des personnes ayant des revenus supérieurs à une certaine valeur. Tu peux aussi utiliser SELECT * FROM comme pour n'importe quelle autre requête. Pourras-tu faire un JOIN avec d'autres tables ?"
+                    data-default-text="SELECT individu.nom_complet, revenu.revenu_annuel 
+FROM revenu 
+JOIN individu 
+ON revenu.nir = individu.nir 
+LIMIT 10;"></sql-exercise>
+                <p>Le mot-clef <code>ON</code> est très important. Essaie de la supprimer pour comprendre comment fonctionne <code>INNER JOIN</code>... (mets un <code>LIMIT</code> à 50 pour ne pas avoir trop de résultats).</p>
+                <p>Selon les besoins, on peut joindre autant de relations dans une même requête.</p>
+                <sql-exercise data-question="Voyons si les personnes qui ont des salaires importants ont d'autres caractéristiques en commun." data-comment="Cet exemple montre comment joindre 3 relations : revenu, individu et permis_auto. Accessoirement, cet exemple montre comment utiliser des « alias », avec le mot-clef AS, pour les noms des relations et pour les noms des attributs de différentes tables. C'est un outil pratique." data-default-text="SELECT nom_complet AS Nom, revenu_annuel AS 'Revenu annuel', sexe AS Sexe, couleur_cheveux AS 'Cheveux (couleur)'
+FROM revenu AS r
+JOIN individu AS i
+ON r.nir = i.nir 
+JOIN permis_auto AS p
+ON permis_id = p.id
+WHERE revenu_annuel > 450000;"></sql-exercise>
+
+
+                <p>Maintenant que tu sais comment joindre des relations, tu dois être en mesure de trouver les transcriptions d'entretiens pour les deux témoins que tu as identifiés plus tôt !</p>
+
+                <sql-exercise data-question="Trouve les entretiens !" data-comment="La solution attendue utilise une seule requête pour obtenir les deux entretiens, mais il existe d'autres façons de procéder. Techniquement, le JOIN n'est pas obligatoire pour obtenir les transcriptions, mais c'est l'occasion de tester ce mot-clef."
+                    data-default-text="
+
+
+" data-solution="SELECT *
+FROM individu JOIN entretien
+ON individu.id = entretien.individu_id
+WHERE individu.id = 14887 OR individu.id = 16371;"></sql-exercise>
+            </div>
+        </div>
+
+        <div class="grid-item">
+            <h3>Tu vas trouver !</h3>
+            <p>Tu connais maintenant suffisamment de SQL pour lever le mystère. Le <a href="#diagram">diagramme entité-relation</a> est crucial pour faire des hypothèses crédibles et des requêtes correctes. </p>
+            <sql-exercise data-question="Trouve le meurtrier !" data-comment="Il faudra plus d'une requête pour trouver le tueur. Tu peux simplement modifier cette case, en  notant tes résultats en cours. Lorsque tu penses avoir trouvé, rends-toi à la section suivante."
+                data-default-text="
+
+
+"></sql-exercise>
+
+        </div>
+
+        <div class="grid-item">
+            <h3>Vérifie ta solution 👇</h3>
+            <sql-exercise data-question="As-tu trouvé le meurtrier ?" data-comment="" data-default-text="INSERT INTO solution VALUES (1, 'Insère ici le nom complet de la personne trouvée.'); 
+SELECT value FROM solution;"></sql-exercise>
+        </div>
+    </main>
+
+    <footer>
+        <h3>Crédits</h3>
+        <p>"Meurtre et mystère à SQL City" est une adaptation française de l'œuvre <a href="https://mystery.knightlab.com/" target="_blank">"SQL Murder Mystery"</a>.</p>
+        <p>Traduction de la base de donnée automatisée grâce aux API <a href="https://docs.python.org/fr/3/library/sqlite3.html" target="_blank">sqlite3</a>, <a href="https://github.com/psf/requests" target="_blank">requests</a>, <a href="https://pypi.org/project/beautifulsoup4/"  target="_blank">bs4</a> et <a href="https://pypi.org/project/googletrans2/" target="_blank">googletrans</a> pour Python + quelques modifications manuelles. </p>
+        <p>Illustration du tableau d'indices de <a href="https://fr.vecteezy.com/membres/klyaksun" target="_blank">Yuliya Pauliukevich</a> téléchargée gratuitement sur <a href="https://www.vecteezy.com/" target="_blank">Vectors by Vecteezy</a></p>
+        <br>
+        <p><b>"SQL Murder Mystery" :</b></p>
+        <p>Le site original "SQL Murder Mystery" a été créé par <a href="https://twitter.com/joonparkmusic" target="_blank">Joon Park</a> et <a href="https://twitter.com/Cathy_MeiyingHe" target="_blank">Cathy He</a> alors qu'ils étaient au Knight Lab et adapté, et mis en production pour le web par <a href="https://twitter.com/joegermuska" target="_blank">Joe Germuska</a>. Voir le <a href="https://github.com/NUKnightLab/sql-mysteries" target="_blank">GitHub repository</a> pour plus d'informations.</p>
+        <p>Le <a href="https://knightlab.northwestern.edu/" title="Knight Lab | Faire progresser l'innovation dans les médias d'information par l'exploration et l'expérimentation." target="_blank">Knight Lab</a> est rattaché à <a title="Northwestern University" href="http://www.northwestern.edu/" target="_blank">University Northwestern</a> (située aux États-Unis). Il rassemble une équipe de technologues et de journalistes qui travaillent à faire progresser l'innovation dans les médias de l'information par l'exploration et l'expérimentation. Pour voir quelques projets développés par le Knight Lab, c'est par <a href="https://knightlab.northwestern.edu/projects/" target="_blank">ici.</a></p>
+        <p>L'énigme s'inspire d'<a href="https://github.com/veltman/clmystery" target="_blank">un crime survenu à de Terminal City...</a></p>
+        <p>Le SQL basé sur le Web est rendu possible grâce à <a href="https://github.com/sql-js/sql.js/" target="_blank">SQL.js</a></p>
+        <p>Les composants Web personnalisés pour effectuer les requêtes SQL ont été créés et mis dans le domaine public par Zi Chong Kao, créateur de <a href="https://selectstarsql.com/" target="_blank">Select Star SQL.</a></p>
+        <br>
+        <p>Le code original est publié sous la <a href="https://github.com/habored/mystere-sql/blob/master/LICENSE" target="_blank">licence MIT</a></p>
+        <p>Le texte original et les autres contenus sont publiés sous <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr" target="_blank">Creative Commons CC BY-SA 4.0</a></p>
+    </footer>
+</body>
+</html>

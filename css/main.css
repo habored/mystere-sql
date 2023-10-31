@@ -1,0 +1,384 @@
+@charset "UTF-8";
+html {
+    box-sizing: border-box;
+}
+body {
+    font-family: "Inria Serif", "Times New Roman", "Times";  
+    font-size: 19px;
+    letter-spacing: .02rem;
+    word-spacing: .05rem;
+    margin: 0;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    color: #3E424D;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+    display: block;
+}
+main {
+    margin: 0 10%;
+    width: 80% !important;
+    padding: 0;
+}
+
+/*header */
+
+header {
+    background: #F8F4F4;
+    border-bottom: 1px solid #b8b8b8;
+    display: block;
+    padding: 1.8em 1.5em 2.5em 1.5em;
+    margin-bottom: 2em;
+    text-align: center;
+}
+@media only screen and (max-width:767px) {
+    header {
+        padding: 1.3em .5em;
+    }
+}
+
+
+/*titles*/
+
+h1, h2, h3, h4, h5, h6 {
+    color: #3F2457;
+    font-family:"RLMadena", Georgia,"Times New Roman",Times,serif;
+    letter-spacing: 1px;
+    text-rendering: optimizeLegibility;
+}
+h1 {
+    font-style: italic;
+    font-size: 3.4rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 0;
+}
+@media only screen and (max-width:767px) {
+    h1 {
+      font-size: 2.5rem;
+      padding: 0.5rem;
+    }
+}
+
+h2 {
+    font-size: 2.2rem;
+}
+
+h2.subtitle {
+    color: #E63E5D;
+    font-family: "Joan Regular", Georgia,"Times New Roman",Times,serif;
+    font-size: 2.2rem;
+    font-style: italic;
+    font-weight: 400;    
+    letter-spacing: 1px;
+    margin: 0;
+}
+@media only screen and (max-width:767px) {
+    h2.subtitle {
+      font-style: italic;
+      color: #E63E5D;
+      font-size: 2rem;
+    }
+}
+
+h3 {
+    color: #62537E;
+    font-size: 1.7rem;
+}
+
+h4 {
+    font-style: italic;
+    color: #63577B;;
+}
+
+/*top image*/
+
+.introduction img {
+    width:100%;
+    height: auto;
+    margin-bottom: 1em;
+    border-radius: 8px;
+}
+
+
+/*Hyperlinks and tooltips*/
+
+main a {
+    color: inherit;
+}
+main a:hover, main [title]:hover {
+    background-color:#FFFCBD;
+}
+main [title] {
+    color:#f65696;
+    cursor: help;
+}
+
+
+/*Code*/
+
+code {
+    font-family: 'Courier New', Courier, monospace;  
+    background-color: #e9f5fa;
+    color: black;
+}
+code i[title] {
+    color: #84224B;
+}
+
+/*Definition*/
+
+dl, dt, dd {
+    margin: 0px;
+}
+dt {
+    font-size: 1.1em;
+}
+dd {
+    color: #E63E5D ;
+    font-weight: 600;
+}
+dt, dd b {
+    color: #84224B;
+    font-weight: 900;
+}
+
+
+/* datatable examples */
+
+.datatable {
+    border: solid 1px #B8B8B8;
+    border-collapse: collapse;
+    font-size: 16px;
+    min-width: 100%;
+}
+.datatable thead, td {
+    padding: 3px;
+    border: solid 1px #B8B8B8;
+}
+.datatable thead {
+    background: #eceaea;
+    font-weight: bold;
+}
+
+
+/* sql quiz component */
+
+sql-quiz .sqlQuizHomeDiv { 
+    margin: 1em 0em;
+    background: #f9f9f9;
+    padding: 6px;
+    border-radius: 6px;
+    font-weight: 200;
+}
+
+sql-quiz .sqlQuizTitle {
+    font-weight: 700;
+}
+
+sql-quiz .sqlQuizDescription {}
+
+sql-quiz .sqlQuizInputArea {
+    line-height: 130%;
+    min-width: 100%;
+}
+
+sql-quiz .sqlQuizInputArea .sqlOption {
+    min-width: 100%;
+    margin: 0.5em 0em;
+}
+
+sql-quiz input[type=checkbox] {
+    transform: scale(1.5);
+    float: left;
+}
+
+sql-quiz .sqlOption .optionText {
+    display: table;
+}
+
+sql-quiz .sqlOption .hintSpan {
+    /*when revealed, display: table-row;*/
+    display: none;
+    color: blue;
+    font-weight: 200;
+}
+
+sql-quiz .sqlQuizInputArea input {
+    margin-right: 1em;
+    background: none;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 200;
+}
+
+sql-quiz .sqlQuizOutputArea .returnOkay {
+    margin-top: 0.5em;
+}
+
+
+/* sql exercise component */
+
+sql-exercise .sqlExHomeDiv {
+    margin: 1em 0em;
+    font-family: sans-serif;
+    background: #f9f9f9;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+sql-exercise .sqlExQuestion {
+    font-weight: 700;
+}
+
+sql-exercise .sqlExComment {
+    font-weight: 200;
+}
+
+sql-exercise form {
+    display: block;
+}
+
+sql-exercise .sqlExInputArea {
+    line-height: 130%;
+    min-width: 100%;
+}
+
+sql-exercise .sqlExOutputArea {
+    max-width: 52rem;
+    overflow: auto;
+    background: #f9f9f9;
+    min-width: 100%;
+}
+
+sql-exercise .sqlExOutputArea .returnOkay {
+    margin-top: 0.5em;
+}
+
+sql-exercise .sqlExOutputArea .returnError {
+    margin-top: 0.5em;
+    color: red;
+}
+
+sql-exercise .CodeMirror {
+    margin: 0.5em 0em;
+}
+
+sql-exercise .sqlExInputArea input {
+    margin-right: 1em;
+    background: none;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 200;
+}
+
+
+/* hidde display schema */
+
+#experienced-schema {
+    display: none;
+}
+#experienced-schema.show {
+    display: block;
+}
+
+
+/* list items */
+
+li {
+    font-size: 100%;
+}
+
+
+/* figures */
+
+figure { 
+    margin: 3em auto;
+}
+figure figcaption {  
+    font: italic .8em sans-serif ;
+    color: #777777;
+    padding-top: 4px;
+    text-align: center;
+}
+
+
+/* sql schema tables */
+
+table.sqltable {
+    font-family: sans-serif;
+    width: inherit;
+    margin: auto;
+    border: 1px solid #808080 ;
+}
+table.sqltable tr, table.sqltable td, table.sqltable th  {
+    padding: 3px;
+    border: none;
+}
+table.sqltable th {
+    text-align: center;
+    border-bottom: 1px solid #808080 ;
+}
+table.sqltable td:nth-child(2) {
+    color: #808080 ;
+}
+
+
+/* clues */
+
+.clue {  
+    margin: 0 5em;
+    padding: 1em 2em;
+    border: solid 10px;
+    border-image: repeating-linear-gradient(-75deg, yellow, #F1AD3E 10px, black 10px, black 20px) 20;
+}
+@media only screen and (max-width:767px) {
+    .clue {
+        margin: 0 ;
+    }
+}
+.clue div {
+    margin: auto;
+    width:100%;
+    text-align: center;
+}
+.clue-title {
+    font-family: Impact, 'Arial Narrow Bold', sans-serif; 
+    font-size: 25px;
+    width: max-content;
+    display: inline-flex;
+}
+.clue-number { 
+    height: fit-content;
+    width: 100%;
+    background-image: url( '../img/number-case.svg' );
+    background-size: contain;    
+    background-position: bottom center, 50%, 50%;
+    background-repeat: no-repeat;
+    font-family: Impact, 'Arial Narrow Bold', sans-serif; 
+    color: #2e2b19;
+    font-size: 60px;
+    padding-right: 35px;
+    font-style: italic;
+    min-width: 94px;
+    padding-bottom: 5px;
+ }
+
+ /* knightlab footer */
+
+footer { 
+    margin:0;
+    background-color: #573C46;
+    color: #AE9dA7;
+    padding: 30px;
+    font-size: 11px;
+    line-height: 11px;
+}
+footer  h3, footer a { 
+    color: #AE9dA7;
+ }
+footer .grid-size-2, .grid-size-2-phone , .grid-center{
+    display: flex;
+    margin-top: 10px;
+    justify-content: space-evenly;
+}
